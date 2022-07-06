@@ -15,10 +15,10 @@ end Cache;
 architecture DirectMapped of Cache is
 	
 	TYPE data32in4 is ARRAY (0 to 31) of STD_LOGIC_VECTOR(3 downto 0);
-	SIGNAL VT_memory: data32in4;
+	SIGNAL VT_memory: data32in4 := (others => (others => '0'));
 
 	TYPE data32in64 is ARRAY (0 downto 31) of STD_LOGIC_VECTOR(63 downto 0);
-	SIGNAL data_memory: data32in64;
+	SIGNAL data_memory: data32in64 := (others => (others => '0'));
 	
 begin
 	
@@ -74,6 +74,7 @@ begin
       end if;
 		
 	end Process;
+	
 end DirectMapped;
 
 architecture TwoWaySetAssociative of Cache is
