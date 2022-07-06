@@ -98,12 +98,12 @@ begin
 		VARIABLE memory_index : INTEGER;
 		
 		VARIABLE vt_0 : STD_LOGIC_VECTOR(5 downto 0);
-		ALIAS valid_0 : STD_LOGIC is vt(5);
-		ALIAS tag_in_memory_0 : STD_LOGIC_VECTOR(4 downto 0) is vt(4 downto 0);
+		ALIAS valid_0 : STD_LOGIC is vt_0(5);
+		ALIAS tag_in_memory_0 : STD_LOGIC_VECTOR(4 downto 0) is vt_0(4 downto 0);
 		
 		VARIABLE vt_1 : STD_LOGIC_VECTOR(5 downto 0);
-		ALIAS valid_1 : STD_LOGIC is vt(5);
-		ALIAS tag_in_memory_1 : STD_LOGIC_VECTOR(4 downto 0) is vt(4 downto 0);
+		ALIAS valid_1 : STD_LOGIC is vt_1(5);
+		ALIAS tag_in_memory_1 : STD_LOGIC_VECTOR(4 downto 0) is vt_1(4 downto 0);
 		
 	begin
 		
@@ -117,10 +117,10 @@ begin
 				
 				-- mis-hit control
 				if (valid_0 = '1' AND tag_in_memory_0 = tag) then
-					data_bus_out := data_memory_0(memory_index);
+					data_bus_out <= data_memory_0(memory_index);
 					hit <= '1';
 				elsif (valid_1 = '1' AND tag_in_memory_1 = tag) then
-					data_bus_out := data_memory_1(memory_index);
+					data_bus_out <= data_memory_1(memory_index);
 					hit <= '1';
 				else
 					hit <= '0';
