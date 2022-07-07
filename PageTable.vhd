@@ -8,20 +8,19 @@ entity PageTable is
     Port ( read_enable : in  STD_LOGIC;
            write_enable : in  STD_LOGIC;
            vpn : in  STD_LOGIC_VECTOR (8 downto 0);
-           data_bus_in : in  STD_LOGIC_VECTOR (3 downto 0);
+           ppn_in : in  STD_LOGIC_VECTOR (3 downto 0); -- incoming ppn from MainMemory
            clk : in  STD_LOGIC;
-           data_bus_out : out  STD_LOGIC_VECTOR (3 downto 0);
+           ppn_out : out  STD_LOGIC_VECTOR (3 downto 0); -- outgoing ppn to TLB
            hit : out  STD_LOGIC);
 end PageTable;
 
 architecture Behavioral of PageTable is
 
 	SIGNAL PT_Memory: data512in5 := (others => (others => '0'));
-	SIGNAL init : STD_LOGIC := '1';
 	
 begin
 
-	PT_Memory_process : Process(clk, vpn, data_bus_in, read_enable, write_enable) is
+	PT_Memory_process : Process(clk, vpn, ppn_in, read_enable, write_enable) is
 	
 		VARIABLE data_row : STD_LOGIC_VECTOR(4 downto 0);
 		ALIAS valid : STD_LOGIC is data_row(4);
@@ -39,15 +38,11 @@ begin
 	begin
 		
 		if (read_enable = '1' AND RISING_EDGE(clk)) then
-			if (init = '1') then
-				PT_Memory(0) <= "10000";
-				init <= '1';
-			end if;
-			
+		
 			index := to_integer(unsigned(vpn));
 			data_row := PT_Memory(index);
 			if (valid = '1') then
-				data_bus_out <= ppn;
+				ppn_out <= ppn;
 				hit <= '1';
 			else
 				hit <= '0';
@@ -57,7 +52,7 @@ begin
 		
 		if (write_enable = '1' AND FALLING_EDGE(clk)) then
 			index := to_integer(unsigned(vpn));
-			PT_Memory(index) <= '1' & data_bus_in;
+			PT_Memory(index) <= '1' & ppn_in;
 		end if;
 		
 	end Process;

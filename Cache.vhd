@@ -28,10 +28,13 @@ begin
 		ALIAS wo : STD_LOGIC is address_var(2);
 		ALIAS index : STD_LOGIC_VECTOR(4 downto 0) is address_var(7 downto 3);
 		ALIAS tag : STD_LOGIC_VECTOR(2 downto 0) is address_var(10 downto 8);
+		
 		VARIABLE memory_index : INTEGER;
+		
 		VARIABLE vt : STD_LOGIC_VECTOR(3 downto 0);
 		ALIAS valid : STD_LOGIC is vt(3);
 		ALIAS tag_in_memory : STD_LOGIC_VECTOR(2 downto 0) is vt(2 downto 0);
+		
 		VARIABLE data_row : STD_LOGIC_VECTOR(63 downto 0);
 		ALIAS word_0 : STD_LOGIC_VECTOR(31 downto 0) is data_row(31 downto 0);
 		ALIAS word_1 : STD_LOGIC_VECTOR(31 downto 0) is data_row(63 downto 32);
@@ -126,22 +129,22 @@ begin
 			end if;
 		end if;
 		
-		if (write_en = '1') then
-			if (FALLING_EDGE(clk)) then -- if clock is on its falling edge write will be done
-				memory_index := to_integer(unsigned(index));
-				vt_0 := VT_memory_0(memory_index);
-				vt_1 := VT_memory_1(memory_index);
-				
-				if ((valid_0 = '0') OR (valid_0 = '1' AND valid_1 = '1')) then -- choosing empty cell to put data in
-					VT_memory_0(memory_index)(5) <= '1';
-					VT_memory_0(memory_index)(4 downto 0) <= tag;
-					data_memory_0(memory_index) <= data_bus_in;
-				else
-					VT_memory_1(memory_index)(5) <= '1';
-					VT_memory_1(memory_index)(4 downto 0) <= tag;
-					data_memory_1(memory_index) <= data_bus_in;
-				end if;
+		if (write_en = '1' AND FALLING_EDGE(clk)) then -- if clock is on its falling edge write will be done
+		
+			memory_index := to_integer(unsigned(index));
+			vt_0 := VT_memory_0(memory_index);
+			vt_1 := VT_memory_1(memory_index);
+			
+			if ((valid_0 = '0') OR (valid_0 = '1' AND valid_1 = '1')) then -- choosing empty cell to put data in
+				VT_memory_0(memory_index)(5) <= '1';
+				VT_memory_0(memory_index)(4 downto 0) <= tag;
+				data_memory_0(memory_index) <= data_bus_in;
+			else
+				VT_memory_1(memory_index)(5) <= '1';
+				VT_memory_1(memory_index)(4 downto 0) <= tag;
+				data_memory_1(memory_index) <= data_bus_in;
 			end if;
+			
       end if;
 		
 	end Process;

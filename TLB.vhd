@@ -71,8 +71,7 @@ begin
 				uniform(seed1, seed2, x);
 				random_index := integer(floor(x * 48.0));
 			
-				TLB_Memory(random_index)(12 downto 4) <= vpn; -- changing tag
-				TLB_Memory(random_index)(13) <= '1'; -- setting valid bit 1
+				TLB_Memory(random_index)(13 downto 4) <= '1' & vpn; -- changing tag
 			end if;
 		end if;
 		
@@ -82,7 +81,7 @@ end FullAssociative;
 
 architecture FourWaySetAssociative of TLB is
 
-	SIGNAL TLB_memory: four_data12in4 := (others => (others => '0'));
+	SIGNAL TLB_memory: data12in4in10 := (others => (others => (others => '0')));
 
 begin
 
@@ -90,13 +89,15 @@ begin
 		
 		-- vpn_var: holds input vpn
 		VARIABLE vpn_var : STD_LOGIC_VECTOR(8 downto 0);
-		ALIAS input_tag : STD_LOGIC_VECTOR(6 downto 0) is vpn_var(8 downto 2);
-		ALIAS input_index : STD_LOGIC_VECTOR(1 downto 0) is vpn_var(1 downto 0);
+		ALIAS input_tag : STD_LOGIC_VECTOR(4 downto 0) is vpn_var(8 downto 4);
+		ALIAS input_index : STD_LOGIC_VECTOR(3 downto 0) is vpn_var(3 downto 0);
 		
-		VARIABLE data_row : STD_LOGIC_VECTOR(13 downto 0);
-		ALIAS valid : STD_LOGIC is data_row(13);
-		ALIAS row_tag : STD_LOGIC_VECTOR(6 downto 0) is data_row(12 downto 6);
-		ALIAS row_index : STD_LOGIC_VECTOR(1 downto 0) is data_row(5 downto 4);
+		-- index of TLB
+		VARIABLE index : INTEGER;
+		
+		VARIABLE data_row : STD_LOGIC_VECTOR(9 downto 0);
+		ALIAS valid : STD_LOGIC is data_row(9);
+		ALIAS row_tag : STD_LOGIC_VECTOR(4 downto 0) is data_row(8 downto 4);
 		ALIAS ppn : STD_LOGIC_VECTOR(3 downto 0) is data_row(3 downto 0);
 		
 		VARIABLE flag : STD_LOGIC := '0';
@@ -111,9 +112,10 @@ begin
 		if (read_enable = '1' AND RISING_EDGE(clk)) then
 			flag := '0';
 			vpn_var := vpn;
+			index := to_integer(unsigned(input_index)) mod 12;
 			
-			for i in 0 to 11 loop
-				data_row := TLB_Memory(input_index)(i);
+			for i in 0 to 3 loop
+				data_row := TLB_Memory(index)(i);
 				if (valid = '1' AND input_tag = row_tag) then
 					data_bus_out <= ppn;
 					hit <= '1';
@@ -130,11 +132,11 @@ begin
 		if (write_enable = '1' AND FALLING_EDGE(clk)) then
 			flag := '0';
 			vpn_var := vpn;
+			index := to_integer(unsigned(input_index)) mod 12;
 			
 			for i in 0 to 11 loop
-				data_row := TLB_Memory(input_index)(i);
 				if (valid = '0') then
-					TLB_Memory(input_index)(i)(12 downto 4) <= vpn;
+					TLB_Memory(index)(i)(8 downto 4) <= input_tag;
 					flag := '1';
 					exit;
 				end if;
@@ -147,8 +149,7 @@ begin
 				uniform(seed1, seed2, x);
 				random_index := integer(floor(x * 12.0));
 				
-				TLB_Memory(input_index)(random_index)(12 downto 4) <= vpn; -- changing tag
-				TLB_Memory(input_index)(random_index)(13) <= '1'; -- setting valid bit 1
+				TLB_Memory(index)(random_index)(9 downto 4) <= '1' & input_tag; -- changing tag and valid bit
 			end if;
 		end if;
 		
