@@ -20,7 +20,7 @@ architecture FullAssociative of TLB is
 
 begin
 
-	FullAssociativeProcess : Process(clk, read_enable, write_enable) is
+	FullAssociativeProcess : Process(clk, block_address, data_bus_in, read_enable, write_enable) is
 		
 		VARIABLE data_row : STD_LOGIC_VECTOR(13 downto 0);
 		ALIAS valid : STD_LOGIC is data_row(13);
@@ -86,7 +86,7 @@ architecture FourWaySetAssociative of TLB is
 
 begin
 
-	FourWaySetAssociativeProcess : Process(clk, read_enable, write_enable) is
+	FourWaySetAssociativeProcess : Process(clk, block_address, data_bus_in, read_enable, write_enable) is
 		
 		-- vpn_var: holds input vpn
 		VARIABLE vpn_var : STD_LOGIC_VECTOR(8 downto 0);

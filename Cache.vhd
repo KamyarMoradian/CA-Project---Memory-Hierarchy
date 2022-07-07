@@ -21,7 +21,7 @@ architecture DirectMapped of Cache is
 	
 begin
 	
-	DirectMappedProcess : Process(clk, read_en, write_en) is 
+	DirectMappedProcess : Process(clk, block_address, data_bus_in, read_en, write_en) is 
 	
 		VARIABLE address_var : STD_LOGIC_VECTOR(10 downto 0);
 		ALIAS bo : STD_LOGIC_VECTOR(1 downto 0) is address_var(1 downto 0);
@@ -86,7 +86,7 @@ architecture TwoWaySetAssociative of Cache is
 
 begin
 
-	DirectMappedProcess : Process(clk, read_en, write_en) is 
+	DirectMappedProcess : Process(clk, block_address, data_bus_in, read_en, write_en) is 
 	
 		VARIABLE address_var : STD_LOGIC_VECTOR(10 downto 0);
 		ALIAS bo : STD_LOGIC_VECTOR(1 downto 0) is address_var(1 downto 0);

@@ -21,7 +21,7 @@ architecture Behavioral of PageTable is
 	
 begin
 
-	PT_Memory_process : Process(clk, read_enable, write_enable) is
+	PT_Memory_process : Process(clk, vpn, data_bus_in, read_enable, write_enable) is
 	
 		VARIABLE data_row : STD_LOGIC_VECTOR(4 downto 0);
 		ALIAS valid : STD_LOGIC is data_row(4);
