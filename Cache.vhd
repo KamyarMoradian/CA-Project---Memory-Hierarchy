@@ -1,6 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
+library work;
+    use work.Types.ALL;
 
 entity Cache is
     Port ( read_en : in  STD_LOGIC;
@@ -14,10 +16,7 @@ end Cache;
 
 architecture DirectMapped of Cache is
 	
-	TYPE data32in4 is ARRAY (0 to 31) of STD_LOGIC_VECTOR(3 downto 0);
 	SIGNAL VT_memory: data32in4 := (others => (others => '0'));
-
-	TYPE data32in64 is ARRAY (0 downto 31) of STD_LOGIC_VECTOR(63 downto 0);
 	SIGNAL data_memory: data32in64 := (others => (others => '0'));
 	
 begin
@@ -79,11 +78,9 @@ end DirectMapped;
 
 architecture TwoWaySetAssociative of Cache is
 
-	TYPE data32in6 is ARRAY (0 to 31) of STD_LOGIC_VECTOR(5 downto 0);
 	SIGNAL VT_memory_0: data32in6;
 	SIGNAL VT_memory_1: data32in6;
 
-	TYPE data32in32 is ARRAY (0 downto 31) of STD_LOGIC_VECTOR(31 downto 0);
 	SIGNAL data_memory_0: data32in32;
 	SIGNAL data_memory_1: data32in32;
 
