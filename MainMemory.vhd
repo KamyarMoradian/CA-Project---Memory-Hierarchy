@@ -6,7 +6,7 @@ library work;
 
 
 
-entity Memory is
+entity MainMemory is
     Port ( read_enable : in  STD_LOGIC;
            write_enable : in  STD_LOGIC;
            ppn : in  STD_LOGIC_VECTOR (3 downto 0);
@@ -14,9 +14,9 @@ entity Memory is
            data_bus_in : in  STD_LOGIC_VECTOR (1023 downto 0);
            clk : in  STD_LOGIC;
            data_bus_out : out  STD_LOGIC_VECTOR (31 downto 0));
-end Memory;
+end MainMemory;
 
-architecture Behavioral of Memory is
+architecture Behavioral of MainMemory is
 
 	SIGNAL data_memory: data12in32in32 := (others => (others => (others => '0')));
 
