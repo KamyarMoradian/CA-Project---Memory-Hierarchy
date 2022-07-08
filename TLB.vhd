@@ -1,6 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
+use IEEE.MATH_REAL.UNIFORM;
+use ieee.MATH_REAL.FLOOR;
 library work;
     use work.Types.ALL;
 
@@ -20,7 +22,7 @@ architecture FullAssociative of TLB is
 
 begin
 
-	FullAssociativeProcess : Process(clk, block_address, data_bus_in, read_enable, write_enable) is
+	FullAssociativeProcess : Process(clk, vpn, data_bus_in, read_enable, write_enable) is
 		
 		VARIABLE data_row : STD_LOGIC_VECTOR(13 downto 0);
 		ALIAS valid : STD_LOGIC is data_row(13);
@@ -85,7 +87,7 @@ architecture FourWaySetAssociative of TLB is
 
 begin
 
-	FourWaySetAssociativeProcess : Process(clk, block_address, data_bus_in, read_enable, write_enable) is
+	FourWaySetAssociativeProcess : Process(clk, vpn, data_bus_in, read_enable, write_enable) is
 		
 		-- vpn_var: holds input vpn
 		VARIABLE vpn_var : STD_LOGIC_VECTOR(8 downto 0);

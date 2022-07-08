@@ -1,6 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
+use IEEE.MATH_REAL.UNIFORM;
+use ieee.MATH_REAL.FLOOR;
 library work;
 use work.Types.ALL;
 
