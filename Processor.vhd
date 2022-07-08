@@ -17,6 +17,13 @@ architecture Behavioral of Processor is
 	-- =========================================================================
 	-- Components:
 	
+	component HardDisc is
+		Port ( read_enable : in  STD_LOGIC;
+				 clk : in  STD_LOGIC;
+			    vpn : in std_logic_vector(8 downto 0);
+			    page_out : out  PAGE );
+	end component;
+	
 	component Cache is
 		Port ( read_en : in  STD_LOGIC;
 				 write_en : in  STD_LOGIC;
@@ -70,6 +77,7 @@ architecture Behavioral of Processor is
 	SIGNAL pt_hit : STD_LOGIC := '0';
 	SIGNAL ram_read_en : STD_LOGIC := '0';
 	SIGNAL ram_write_en : STD_LOGIC := '0';
+	SIGNAL disc_read_en : STD_LOGIC := '0';
 	SIGNAL cache_read_en : STD_LOGIC := '0';
 	SIGNAL cache_write_en : STD_LOGIC := '0';
 	SIGNAL cache_hit : STD_LOGIC := '0';
@@ -87,14 +95,15 @@ architecture Behavioral of Processor is
 	-- data signals
 	SIGNAL cache_data_out : STD_LOGIC_VECTOR(31 downto 0);
 	SIGNAL ram_data_out : STD_LOGIC_VECTOR(31 downto 0);
-	SIGNAL disk_data_out : PAGE;
+	SIGNAL disc_data_out : PAGE;
 	
 	-- cache block address
 	SIGNAL cache_block_address : STD_LOGIC_VECTOR(10 downto 0);
 	
 	-- =========================================================================
 	-- Enumerated type declaration and state signal declaration
-   SIGNAL State : state_type := Init;
+   SIGNAL present_state : state_type := Init;
+   SIGNAL next_state : state_type;
 
 	-- =========================================================================
 	-- array of VAs and index
@@ -107,96 +116,85 @@ architecture Behavioral of Processor is
 	-- =========================================================================
 
 begin
+	DeterminePresentState : Process(clk) is
+	begin
+		if (clk'event) then
+			present_state <= next_state after 10 ns;
+		end if;
+	end Process;
 
 	DetermineState : Process(clk) is
 	begin
-		case State is
+		case present_state is
 			when Init =>
-				State <= Processor_State;
+				next_state <= Processor_State;
 			--------------------
 			when Processor_State =>
-				State <= TLB_Read;
+				next_state <= TLB_Read;
 			--------------------
 			when Cache_Read =>
 				if (cache_hit = '1') then
-					State <= Processor_State;
+					next_state <= Processor_State;
 				else
-					State <= RAM_Read;
+					next_state <= RAM_Read;
 				end if;
 			--------------------
 			when TLB_Read => 
 				if (tlb_hit = '1') then
-					State <= Cache_Read;
+					next_state <= Cache_Read;
 				else
-					State <= PT_Read;
+					next_state <= PT_Read;
 				end if;
 			--------------------
 			when PT_Read => 
 				if (pt_hit = '1') then
-					State <= TLB_Write;
+					next_state <= TLB_Write;
 				else
-					State <= Disk_State;
+					next_state <= Disk_State;
 				end if;
 			--------------------
 			when RAM_Read => 
-				State <= Cache_Write;
+				next_state <= Cache_Write;
 			--------------------
 			when Disk_State => 
-				State <= RAM_Write;
+				next_state <= RAM_Write;
 			--------------------
 			when Cache_Write => 
-				State <= Cache_Read;
+				next_state <= Cache_Read;
 			--------------------
 			when RAM_Write => 
-				State <= PT_Write;
+				next_state <= PT_Write;
 			--------------------
 			when PT_Write => 
-				State <= PT_Read;
+				next_state <= PT_Read;
 			--------------------
 			when TLB_Write => 
-				State <= TLB_Read;
+				next_state <= TLB_Read;
 			--------------------
 		end case;
 	end Process;
 	
-	LogicProcess : Process(State) is
+	LogicProcess : Process(clk) is
 	begin
-		case State is
-			when Init =>
-			-- setting all control signals.
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
+		tlb_read_en <= '0';
+		tlb_write_en <= '0';
+		pt_read_en <= '0';
+		pt_write_en <= '0';
+		ram_read_en <= '0';
+		ram_write_en <= '0';
+		cache_read_en <= '0';
+		cache_write_en <= '0';
+		disc_read_en <= '0';
+		
+		case present_state is
 			when Processor_State =>
-			-- setting all control signals.
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
 				virtual_address <= (others => '0');
 				ppn_out_tlb <= (others => '0');
 				ppn_out_pt <= (others => '0');
 				ppn_out_ram <= (others => '0');
 				cache_data_out <= (others => '0');
 				ram_data_out <= (others => '0');
-				disk_data_out <= (others => (others => '0'));
+				disc_data_out <= (others => (others => '0'));
 				cache_block_address <= (others => '0');
 				
 				virtual_address <= VA_memory(index);
@@ -204,158 +202,74 @@ begin
 			----------------------------------------
 			when Cache_Read =>
 				-- setting all control signals.
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
 				cache_read_en <= '1';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
+
 			----------------------------------------
 			when TLB_Read => 
 				tlb_read_en <= '1';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
+
 			----------------------------------------
 			when PT_Read => 
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
 				pt_read_en <= '1';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
+
 				cache_block_address <= ppn_out_tlb & page_offset;
 			----------------------------------------
 			when RAM_Read => 
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
 				ram_read_en <= '1';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
+
 			----------------------------------------
 			when Disk_State => 
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
+				disc_read_en <= '1';
+
 			----------------------------------------
 			when Cache_Write => 
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
 				cache_write_en <= '1';
-				cache_hit <= '0';
-				
+
 			----------------------------------------
 			when RAM_Write => 
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
 				ram_write_en <= '1';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
+
 			----------------------------------------
 			when PT_Write => 
-				tlb_read_en <= '0';
-				tlb_write_en <= '0';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
 				pt_write_en <= '1';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
-				
+
 			----------------------------------------
 			when TLB_Write => 
-				tlb_read_en <= '0';
 				tlb_write_en <= '1';
-				tlb_hit <= '0';
-				pt_read_en <= '0';
-				pt_write_en <= '0';
-				pt_hit <= '0';
-				ram_read_en <= '0';
-				ram_write_en <= '0';
-				cache_read_en <= '0';
-				cache_write_en <= '0';
-				cache_hit <= '0';
 				
 			----------------------------------------
+			when others =>
+				null;
 		end case;
 	end Process;
 	
 	state_out_Process: Process(clk) is
 	begin
-		state_out <= State;
+		state_out <= present_state;
 	end Process;
 	
-	data_out_Process : Process(State) is
+	data_out_Process : Process(present_state) is
 	begin
-		if (state = Cache_Read) then
+		if (present_state = Cache_Read) then
 			data_out <= cache_data_out;
 		end if;
 	end Process;
 	
-	Cache_Component : Cache(TwoWaySetAssociative) PORT MAP ( cache_read_en, cache_write_en, cache_block_address, 
-												  ram_data_out, clk, cache_hit, cache_data_out );
+	Cache_Component : entity work.Cache(TwoWaySetAssociative) PORT MAP 
+												 ( cache_read_en, cache_write_en, cache_block_address, 
+												   ram_data_out, clk, cache_hit, cache_data_out );
 	
-	TLB_Component : TLB(FullAssociative) PORT MAP ( tlb_read_en, tlb_write_en, vpn, ppn_out_pt,
-											 clk, ppn_out_tlb, tlb_hit);
+	TLB_Component : entity work.TLB(FullAssociative) PORT MAP 
+											( tlb_read_en, tlb_write_en, vpn, ppn_out_pt,
+											  clk, ppn_out_tlb, tlb_hit);
 	
-	PT_Component : PageTable PORT MAP ( pt_read_en, pt_write_en, vpn, ppn_out_ram,
+	PT_Component : entity work.PageTable PORT MAP ( pt_read_en, pt_write_en, vpn, ppn_out_ram,
 													clk, ppn_out_pt, pt_hit);
 	
-	RAM_Component : MainMemory PORT MAP ( ram_read_en, ram_write_en, ppn_out_pt, page_offset,
-													  disk_data_out, clk, ppn_out_ram, ram_data_out);
+	RAM_Component : entity work.MainMemory PORT MAP ( ram_read_en, ram_write_en, ppn_out_pt, page_offset,
+													  disc_data_out, clk, ppn_out_ram, ram_data_out);
+													  
+	Disc_Component : entity work.HardDisc PORT MAP ( disc_read_en, clk, vpn, disc_data_out);
 													  
 end Behavioral;
 

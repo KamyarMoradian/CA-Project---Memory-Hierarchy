@@ -7,11 +7,11 @@ package Types is
 
 	TYPE data32in4 is ARRAY (0 to 31) of STD_LOGIC_VECTOR(3 downto 0);
 	
-	TYPE data32in64 is ARRAY (0 downto 31) of STD_LOGIC_VECTOR(63 downto 0);
+	TYPE data32in64 is ARRAY (0 to 31) of STD_LOGIC_VECTOR(63 downto 0);
 	
 	TYPE data32in6 is ARRAY (0 to 31) of STD_LOGIC_VECTOR(5 downto 0);
 	
-	TYPE data32in32 is ARRAY (0 downto 31) of STD_LOGIC_VECTOR(31 downto 0);
+	TYPE data32in32 is ARRAY (0 to 31) of STD_LOGIC_VECTOR(31 downto 0);
 	
 	TYPE data48in14 is ARRAY (0 to 47) of STD_LOGIC_VECTOR(13 downto 0);
 	

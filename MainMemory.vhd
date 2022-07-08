@@ -17,7 +17,7 @@ end MainMemory;
 
 architecture Behavioral of MainMemory is
 
-	SIGNAL data_memory: data12in32in32 := (others => (others => (others => '0')));
+	SIGNAL data_memory: data12in32in32 := (others => (others => (others => 'U')));
 	SIGNAL index : INTEGER RANGE 0 to 11;
 
 begin

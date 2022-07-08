@@ -1,17 +1,33 @@
-Running: C:\Xilinx\14.7\ISE_DS\ISE\bin\nt64\unwrapped\fuse.exe -intstyle ise -incremental -o C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache_isim_beh.exe -prj C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache_beh.prj work.Cache 
+Running: C:\Xilinx\14.7\ISE_DS\ISE\bin\nt64\unwrapped\fuse.exe -intstyle ise -incremental -o C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_isim_beh.exe -prj C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_beh.prj work.Processor 
 ISim P.20131013 (signature 0x7708f090)
 Number of CPUs detected in this system: 4
 Turning on mult-threading, number of parallel sub-compilation jobs: 8 
 Determining compilation order of HDL files
+Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Types.vhd" into library work
+Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/TLB.vhd" into library work
+Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/PageTable.vhd" into library work
+Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/MainMemory.vhd" into library work
+Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/HardDisc.vhd" into library work
 Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" into library work
-ERROR:HDLCompiler:541 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 101: Type character is not an array type and cannot be indexed.
-ERROR:HDLCompiler:541 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 102: Type character is not an array type and cannot be indexed.
-ERROR:HDLCompiler:541 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 105: Type character is not an array type and cannot be indexed.
-ERROR:HDLCompiler:541 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 106: Type character is not an array type and cannot be indexed.
-ERROR:HDLCompiler:867 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 120: Use <= to assign to signal data_bus_out
-ERROR:HDLCompiler:867 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 123: Use <= to assign to signal data_bus_out
-ERROR:HDLCompiler:69 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 122: <valid_1> is not declared.
-ERROR:HDLCompiler:69 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 119: <valid_0> is not declared.
-ERROR:HDLCompiler:69 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 137: <valid_0> is not declared.
-ERROR:HDLCompiler:854 - "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" Line 79: Unit <twowaysetassociative> ignored due to previous errors.
-VHDL file C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd ignored due to errors
+Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor.vhd" into library work
+Starting static elaboration
+Completed static elaboration
+Compiling package standard
+Compiling package std_logic_1164
+Compiling package numeric_std
+Compiling package std_logic_arith
+Compiling package std_logic_unsigned
+Compiling package types
+Compiling package math_real
+Compiling architecture twowaysetassociative of entity Cache [cache_default]
+Compiling architecture fullassociative of entity TLB [tlb_default]
+Compiling architecture behavioral of entity PageTable [pagetable_default]
+Compiling architecture behavioral of entity MainMemory [mainmemory_default]
+Compiling architecture behavioral of entity HardDisc [harddisc_default]
+Compiling architecture behavioral of entity processor
+Time Resolution for simulation is 1ps.
+Waiting for 5 sub-compilation(s) to finish...
+Compiled 18 VHDL Units
+Built simulation executable C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_isim_beh.exe
+Fuse Memory Usage: 65556 KB
+Fuse CPU Usage: 3437 ms
