@@ -9,8 +9,7 @@ entity HardDisc is
     Port ( read_enable : in  STD_LOGIC;
            clk : in  STD_LOGIC;
 			  vpn : in std_logic_vector(8 downto 0);
-           page_out : out  PAGE;
-			  read_done : out STD_LOGIC );
+           page_out : out  PAGE );
 end HardDisc;
 
 architecture Behavioral of HardDisc is
@@ -541,7 +540,6 @@ begin
 					page_out_var := Hard_Pages(to_integer(unsigned(vpn)));						
 				end if;
 				page_out <= page_out_var;
-				read_done <='1';
 			end if;
 		end process;
 

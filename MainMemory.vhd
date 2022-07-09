@@ -12,9 +12,8 @@ entity MainMemory is
            data_bus_in : in  PAGE;
            clk : in  STD_LOGIC;
 			  ppn_out : out STD_LOGIC_VECTOR (3 downto 0);
-           data_bus_out : out  STD_LOGIC_VECTOR (31 downto 0);-- data going to cache
-			  read_done : out STD_LOGIC;
-			  write_done : out STD_LOGIC); 
+           data_bus_out : out  STD_LOGIC_VECTOR (63 downto 0)); -- data going to cache 
+			  
 end MainMemory;
 
 architecture Behavioral of MainMemory is
@@ -28,13 +27,17 @@ begin
 		
 		VARIABLE index_dim_one : INTEGER;
 		VARIABLE index_dim_two : INTEGER;
+		VARIABLE data_out_word_0 : STD_LOGIC_VECTOR(31 downto 0);
+		VARIABLE data_out_word_1 : STD_LOGIC_VECTOR(31 downto 0);
 		
 	begin
 		if (read_enable = '1' AND RISING_EDGE(clk)) then -- if clock is on its rising edge, read will be done
 			index_dim_one := to_integer(unsigned(ppn_in));
-			index_dim_two := to_integer(unsigned(page_offset(6 downto 2)));
-			data_bus_out <= data_memory(index_dim_one)(index_dim_two);
-			read_done <= '1';
+			index_dim_two := to_integer(unsigned(page_offset(6 downto 3) & '0'));
+			data_out_word_0 := data_memory(index_dim_one)(index_dim_two);
+			index_dim_two := to_integer(unsigned(page_offset(6 downto 3) & '1'));
+			data_out_word_1 := data_memory(index_dim_one)(index_dim_two);
+			data_bus_out <= data_out_word_1 & data_out_word_0;
 		end if;
 		
 		if (write_enable = '1' AND FALLING_EDGE(clk)) then -- if clock is on its falling edge write will be done
@@ -43,7 +46,6 @@ begin
 			end loop;
 			ppn_out <= STD_LOGIC_VECTOR(to_unsigned(index, ppn_out'length));
 			index <= index + 1;
-			write_done <= '1';
 		end if;
 	end process;
 

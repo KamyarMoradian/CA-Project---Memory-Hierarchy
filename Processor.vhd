@@ -6,8 +6,6 @@ library work;
 
 entity Processor is
     Port ( clk : in  STD_LOGIC;
-           tlb_v : in  STD_LOGIC;
-           cache_v : in  STD_LOGIC;
 			  state_out : out state_type;
            data_out : out  STD_LOGIC_VECTOR (31 downto 0));
 end Processor;
@@ -43,26 +41,14 @@ architecture Behavioral of Processor is
 	
 	-- data signals
 	SIGNAL cache_data_out : STD_LOGIC_VECTOR(31 downto 0);
-	SIGNAL ram_data_out : STD_LOGIC_VECTOR(31 downto 0);
+	SIGNAL ram_data_out : STD_LOGIC_VECTOR(63 downto 0);
 	SIGNAL disc_data_out : PAGE;
 	
 	-- cache block address
 	SIGNAL cache_block_address : STD_LOGIC_VECTOR(10 downto 0);
 	
-	
-	SIGNAL pt_read_done : STD_LOGIC;
-	SIGNAL tlb_read_done : STD_LOGIC;
-	SIGNAL cache_read_done : STD_LOGIC;
-	SIGNAL ram_read_done : STD_LOGIC;
-	SIGNAL disc_read_done : STD_LOGIC;
-	
-	SIGNAL pt_write_done : STD_LOGIC;
-	SIGNAL tlb_write_done : STD_LOGIC;
-	SIGNAL cache_write_done : STD_LOGIC;
-	SIGNAL ram_write_done : STD_LOGIC;
-	
-	SIGNAL done : STD_LOGIC := '0';
-	SIGNAL start : STD_LOGIC := '1';
+	-- ram clock
+	SIGNAL ram_clk : INTEGER;
 	-- =========================================================================
 	-- Enumerated type declaration and state signal declaration
    SIGNAL present_state : state_type := Init;
@@ -70,12 +56,16 @@ architecture Behavioral of Processor is
 
 	-- =========================================================================
 	-- array of VAs and index
-	TYPE data10in16 is ARRAY(0 to 9) of STD_LOGIC_VECTOR(15 downto 0);
-	SIGNAL VA_memory : data10in16 := 
-					("0000000000000000","0000000000000100","0000000000000000","0100110000001101",
-					"0010101100010001","1101011010001111","1101100001011011","0011000100010000",
-					"1011000010010010","0011011100101111");
-	SIGNAL index : INTEGER RANGE 0 to 9;
+	TYPE data22in16 is ARRAY(0 to 21) of STD_LOGIC_VECTOR(15 downto 0);
+	SIGNAL VA_memory : data22in16 := 
+					("0000000000000000","0000000000000100","0000000000001000","0000000000001100",
+					"0000000000010000","0000000000000000","0000000000000100","0000000000001000",
+					"0000000000001100","0000000000010000","0010000000000000","0010000000000100",
+					"0010000000001000","0010000000001100","1101100001011000","1101100001011100",
+					"1101100001100000","1101100001100100","0000000000000100","0000000000001000",
+					"0000000000001100","0000000000010000");
+	SIGNAL index : INTEGER RANGE 0 to 21;
+	
 	-- =========================================================================
 
 begin
@@ -83,7 +73,6 @@ begin
 	begin
 		if (clk'event) then
 			present_state <= next_state after 50 ns;
-			done <= '1';
 		end if;
 	end Process;
 
@@ -150,63 +139,51 @@ begin
 		pt_read_en <= '0';
 		pt_write_en <= '0';
 		ram_read_en <= '0';
-		ram_write_en <= '0';
 		cache_read_en <= '0';
 		cache_write_en <= '0';
 		disc_read_en <= '0';
-		
-			case present_state is
-				when Processor_State =>
-					virtual_address <= VA_memory(index);
-					data_out <= cache_data_out;
-					index <= index + 1;
-					start <= '0';
-				----------------------------------------
-				when Cache_Read =>
-					cache_read_en <= '1';
-
-				----------------------------------------
-				when TLB_Read => 
-					tlb_read_en <= '1';
-
-				----------------------------------------
-				when PT_Read => 
-					pt_read_en <= '1';
-					
-				----------------------------------------
-				when RAM_Read => 
-					ram_read_en <= '1';
-
-				----------------------------------------
-				when Disc_State => 
-					disc_read_en <= '1';
-
-				----------------------------------------
-				when Cache_Write => 
-					cache_write_en <= '1';
-
-				----------------------------------------
-				when RAM_Write => 
-					ram_write_en <= '1';
-
-				----------------------------------------
-				when PT_Write => 
-					pt_write_en <= '1';
-
-				----------------------------------------
-				when TLB_Write => 
-					tlb_write_en <= '1';
-					
-				----------------------------------------
-				when others =>
-					null;
-			end case;
-	end Process;
 	
-	done_Process : Process(present_state) is
-	begin
-		done <= tlb_read_done OR cache_read_done OR pt_read_done OR ram_read_done OR disc_read_done
-				  OR tlb_Write_done OR cache_write_done OR pt_write_done OR ram_write_done;
+		case present_state is
+			when Processor_State =>
+				virtual_address <= VA_memory(index);
+				data_out <= cache_data_out;
+				index <= index + 1;
+			----------------------------------------
+			when Cache_Read =>
+				cache_read_en <= '1';
+				
+			----------------------------------------
+			when TLB_Read => 
+				tlb_read_en <= '1';
+
+			----------------------------------------
+			when PT_Read => 
+				pt_read_en <= '1';
+				
+			----------------------------------------
+			when RAM_Read => 
+				ram_read_en <= '1';
+
+			----------------------------------------
+			when Disc_State => 
+				disc_read_en <= '1';
+
+			----------------------------------------
+			when Cache_Write => 
+				cache_write_en <= '1';
+
+			----------------------------------------
+			when PT_Write => 
+				pt_write_en <= '1';
+
+			----------------------------------------
+			when TLB_Write => 
+				tlb_write_en <= '1';
+
+			----------------------------------------
+			when others =>
+				null;
+		end case;
 	end Process;
 	
 	state_out_Process: Process(present_state) is
@@ -214,26 +191,40 @@ begin
 		state_out <= present_state;
 	end Process;
 	
-	Cache_Component : entity work.Cache(TwoWaySetAssociative) PORT MAP 
-												 ( cache_read_en, cache_write_en, cache_block_address, 
-												   ram_data_out, clk, cache_hit, cache_data_out, 
-													cache_read_done, cache_write_done );
+	ram_clk_Process : Process(clk) is
+	begin
+		if (present_state = RAM_Write AND ram_clk >= 2) then
+			ram_write_en <= '1';
+		else 
+			ram_write_en <= '0';
+		end if;
+		if (present_state = RAM_Write) then
+			ram_clk <= (ram_clk + 1) mod 5;
+		else ram_clk <= 0;
+		end if;
+	end Process;
 	
-	TLB_Component : entity work.TLB(FullAssociative) PORT MAP 
+	Cache_v0_Component : entity work.Cache(DirectMapped) PORT MAP 
+												 ( cache_read_en, cache_write_en, cache_block_address, 
+												   ram_data_out, clk, cache_hit, cache_data_out );
+--	Cache_v1_Component : entity work.Cache(TwoWaySetAssociative) PORT MAP 
+--												 ( cache_read_en, cache_write_en, cache_block_address, 
+--												   ram_data_out, clk, cache_hit, cache_data_out );
+	
+	TLB_v0_Component : entity work.TLB(FullAssociative) PORT MAP 
 											( tlb_read_en, tlb_write_en, vpn, ppn_out_pt,
-											  clk, ppn_out_tlb, tlb_hit, tlb_read_done,
-											  tlb_write_done);
+											  clk, ppn_out_tlb, tlb_hit);
+--	TLB_v1_Component : entity work.TLB(FourWaySetAssociative) PORT MAP 
+--											( tlb_read_en, tlb_write_en, vpn, ppn_out_pt,
+--											  clk, ppn_out_tlb, tlb_hit);
 	
 	PT_Component : entity work.PageTable PORT MAP ( pt_read_en, pt_write_en, vpn, ppn_out_ram,
-																	clk, ppn_out_pt, pt_hit, pt_read_done, 
-																	pt_write_done);
+																	clk, ppn_out_pt, pt_hit);
 	
 	RAM_Component : entity work.MainMemory PORT MAP ( ram_read_en, ram_write_en, ppn_out_pt, page_offset,
-																	  disc_data_out, clk, ppn_out_ram, ram_data_out,
-																	  ram_read_done, ram_write_done);
-													  
-	Disc_Component : entity work.HardDisc PORT MAP ( disc_read_en, clk, vpn, disc_data_out, 
-																	 disc_read_done);
-													  
+																	  disc_data_out, clk, ppn_out_ram, ram_data_out);
+	
+	Disc_Component : entity work.HardDisc PORT MAP ( disc_read_en, clk, vpn, disc_data_out);
+	
 end Behavioral;
 

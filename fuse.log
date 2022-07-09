@@ -1,4 +1,4 @@
-Running: C:\Xilinx\14.7\ISE_DS\ISE\bin\nt64\unwrapped\fuse.exe -intstyle ise -incremental -o C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_isim_beh.exe -prj C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_beh.prj work.Processor 
+Running: C:\Xilinx\14.7\ISE_DS\ISE\bin\nt64\unwrapped\fuse.exe -intstyle ise -incremental -o C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Main_TB_isim_beh.exe -prj C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Main_TB_beh.prj work.Main_TB 
 ISim P.20131013 (signature 0x7708f090)
 Number of CPUs detected in this system: 4
 Turning on mult-threading, number of parallel sub-compilation jobs: 8 
@@ -10,6 +10,7 @@ Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---M
 Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/HardDisc.vhd" into library work
 Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Cache.vhd" into library work
 Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor.vhd" into library work
+Parsing VHDL file "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Main_TB.vhd" into library work
 Starting static elaboration
 Completed static elaboration
 Compiling package standard
@@ -19,15 +20,18 @@ Compiling package std_logic_arith
 Compiling package std_logic_unsigned
 Compiling package types
 Compiling package math_real
+Compiling architecture directmapped of entity Cache [cache_default]
 Compiling architecture twowaysetassociative of entity Cache [cache_default]
 Compiling architecture fullassociative of entity TLB [tlb_default]
+Compiling architecture fourwaysetassociative of entity TLB [tlb_default]
 Compiling architecture behavioral of entity PageTable [pagetable_default]
 Compiling architecture behavioral of entity MainMemory [mainmemory_default]
 Compiling architecture behavioral of entity HardDisc [harddisc_default]
-Compiling architecture behavioral of entity processor
+Compiling architecture behavioral of entity Processor [processor_default]
+Compiling architecture behavior of entity main_tb
 Time Resolution for simulation is 1ps.
-Waiting for 5 sub-compilation(s) to finish...
-Compiled 18 VHDL Units
-Built simulation executable C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_isim_beh.exe
-Fuse Memory Usage: 65532 KB
-Fuse CPU Usage: 2577 ms
+Waiting for 8 sub-compilation(s) to finish...
+Compiled 22 VHDL Units
+Built simulation executable C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Main_TB_isim_beh.exe
+Fuse Memory Usage: 65748 KB
+Fuse CPU Usage: 3577 ms

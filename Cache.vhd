@@ -8,12 +8,10 @@ entity Cache is
     Port ( read_en : in  STD_LOGIC;
            write_en : in  STD_LOGIC;
            block_address : in  STD_LOGIC_VECTOR (10 downto 0);
-           data_bus_in : in  STD_LOGIC_VECTOR (31 downto 0);
+           data_bus_in : in  STD_LOGIC_VECTOR (63 downto 0);
            clk : in  STD_LOGIC;
            hit : out  STD_LOGIC;
-           data_bus_out : out  STD_LOGIC_VECTOR (31 downto 0);
-			  read_done : out STD_LOGIC;
-			  write_done : out STD_LOGIC);
+           data_bus_out : out  STD_LOGIC_VECTOR (31 downto 0));
 end Cache;
 
 architecture DirectMapped of Cache is
@@ -61,23 +59,14 @@ begin
 				else
 					hit <= '0';
 				end if;
-				
-				read_done <= '1';
 			end if;
 		end if;
 		
 		if (write_en = '1') then
 			if (FALLING_EDGE(clk)) then -- if clock is on its falling edge write will be done
 				memory_index := to_integer(unsigned(index));
-				VT_memory(memory_index)(4) <= '1'; -- setting valid bit 1
-				
-				if (wo = '0') then -- selecting which word to write in
-					data_memory(memory_index)(31 downto 0) <= data_bus_in;
-				else
-					data_memory(memory_index)(63 downto 32) <= data_bus_in;
-				end if;
-				
-				write_done <= '1';
+				VT_memory(memory_index)(3) <= '1'; -- setting valid bit 1
+				data_memory(memory_index) <= data_bus_in;
 			end if;
       end if;
 		
@@ -95,7 +84,7 @@ architecture TwoWaySetAssociative of Cache is
 
 begin
 
-	DirectMappedProcess : Process(clk, block_address, data_bus_in, read_en, write_en) is 
+	TwoWaySetAssociativeProcess : Process(clk, block_address, data_bus_in, read_en, write_en) is 
 	
 		VARIABLE address_var : STD_LOGIC_VECTOR(10 downto 0);
 		ALIAS bo : STD_LOGIC_VECTOR(1 downto 0) is address_var(1 downto 0);
@@ -132,8 +121,6 @@ begin
 				else
 					hit <= '0';
 				end if;
-				
-				read_done <= '1';
 			end if;
 		end if;
 		
@@ -146,14 +133,24 @@ begin
 			if ((valid_0 = '0') OR (valid_0 = '1' AND valid_1 = '1')) then -- choosing empty cell to put data in
 				VT_memory_0(memory_index)(5) <= '1';
 				VT_memory_0(memory_index)(4 downto 0) <= tag;
-				data_memory_0(memory_index) <= data_bus_in;
+				case index(0) is
+					when '0' =>
+						data_memory_0(memory_index) <= data_bus_in(31 downto 0);
+					when '1' =>
+						data_memory_0(memory_index) <= data_bus_in(63 downto 32);
+					when others => null;
+				end case;
 			else
 				VT_memory_1(memory_index)(5) <= '1';
 				VT_memory_1(memory_index)(4 downto 0) <= tag;
-				data_memory_1(memory_index) <= data_bus_in;
+				case index(0) is
+					when '0' =>
+						data_memory_1(memory_index) <= data_bus_in(31 downto 0);
+					when '1' =>
+						data_memory_1(memory_index) <= data_bus_in(63 downto 32);
+					when others => null;
+				end case;
 			end if;
-			
-			write_done <= '1';
       end if;
 		
 	end Process;

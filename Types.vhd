@@ -15,7 +15,7 @@ package Types is
 	
 	TYPE data48in14 is ARRAY (0 to 47) of STD_LOGIC_VECTOR(13 downto 0);
 	
-	TYPE data4in10 is ARRAY (0 to 3) of STD_LOGIC_VECTOR(13 downto 0);
+	TYPE data4in10 is ARRAY (0 to 3) of STD_LOGIC_VECTOR(9 downto 0);
 	TYPE data12in4in10 is ARRAY (11 downto 0) of data4in10;
 
 	TYPE data512in5 is ARRAY (0 to 511) of STD_LOGIC_VECTOR(4 downto 0);
