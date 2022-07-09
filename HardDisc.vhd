@@ -533,14 +533,11 @@ architecture Behavioral of HardDisc is
 	 
 begin
 		HardDisc_Process : process(clk, read_enable)
-		VARIABLE page_out_var : PAGE;
 		begin
-			if(rising_edge(clk)) then
-				if(read_enable = '1') then
-					page_out_var := Hard_Pages(to_integer(unsigned(vpn)));						
-				end if;
-				page_out <= page_out_var;
+			if(read_enable = '1' AND rising_edge(clk)) then
+				page_out <= Hard_Pages(to_integer(unsigned(vpn)));						
 			end if;
 		end process;
 
 end Behavioral;
+	

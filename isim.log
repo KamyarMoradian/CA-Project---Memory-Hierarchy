@@ -1,10 +1,38 @@
 ISim log file
-Running: C:\Users\Top\Documents\Uni\ForthSem\CA\Project\CA-Project---Memory-Hierarchy\Main_TB_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Main_TB_isim_beh.wdb 
+Running: C:\Users\Top\Documents\Uni\ForthSem\CA\Project\CA-Project---Memory-Hierarchy\Processor_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_isim_beh.wdb 
 ISim P.20131013 (signature 0x7708f090)
 This is a Full version of ISim.
 Time resolution is 1 ps
 # onerror resume
 # wave add /
-# run 1000 ns
+# run 3 ms
 Simulator is doing circuit initialization process.
 Finished circuit initialization process.
+# isim force add /processor/clk 1 -radix bin -value 0 -radix bin -time 50 ns -repeat 100 ns -cancel 3 ms
+# isim force add /processor/tlb_v 0 -radix bin -cancel 3 ms
+# isim force add /processor/cache_v 1 -radix bin -cancel 3 ms
+# run all
+ERROR: Index 14 out of bound 0 to 13. 
+ERROR: In process Processor.vhd:LogicProcess 
+ 
+INFO: Simulator is stopped.
+# isim force add /processor/tlb_v 1 -radix bin -cancel 3 ms
+# run all
+INFO: Simulator is stopped.
+# restart
+# run all
+Simulator is doing circuit initialization process.
+Finished circuit initialization process.
+ISim P.20131013 (signature 0x7708f090)
+This is a Full version of ISim.
+# run 3 ms
+Simulator is doing circuit initialization process.
+Finished circuit initialization process.
+# isim force add /processor/clk 1 -radix bin -value 0 -radix bin -time 50 ns -repeat 100 ns -cancel 3 ms
+# isim force add /processor/tlb_v 0 -radix bin -cancel 3 ms
+# isim force add /processor/cache_v 0 -radix bin -cancel 3 ms
+# run all
+ERROR: Index 14 out of bound 0 to 13. 
+ERROR: In process Processor.vhd:LogicProcess 
+ 
+INFO: Simulator is stopped.

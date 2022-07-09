@@ -1,1 +1,1 @@
--intstyle "ise" -incremental -o "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Main_TB_isim_beh.exe" -prj "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Main_TB_beh.prj" "work.Main_TB" 
+-intstyle "ise" -incremental -o "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_isim_beh.exe" -prj "C:/Users/Top/Documents/Uni/ForthSem/CA/Project/CA-Project---Memory-Hierarchy/Processor_beh.prj" "work.Processor" 

@@ -1,8 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-use IEEE.MATH_REAL.UNIFORM;
-use ieee.MATH_REAL.FLOOR;
 library work;
     use work.Types.ALL;
 
@@ -130,11 +128,7 @@ begin
 			
 			if (flag = '0') then
 				-- generating random index, in case all indeces are full
-				seed1 := 1;
-				seed2 := 1;
-				uniform(seed1, seed2, x);
-				random_index := integer(floor(x * 12.0));
-				
+				random_index := Integer(TIME'POS(now)) mod 12;
 				TLB_Memory(index)(random_index) <= '1' & input_tag & data_bus_in; -- changing tag and valid bit
 			end if;
 		end if;
