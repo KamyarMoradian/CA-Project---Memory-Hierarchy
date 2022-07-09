@@ -12,7 +12,9 @@ entity MainMemory is
            data_bus_in : in  PAGE;
            clk : in  STD_LOGIC;
 			  ppn_out : out STD_LOGIC_VECTOR (3 downto 0);
-           data_bus_out : out  STD_LOGIC_VECTOR (31 downto 0)); -- data going to cache
+           data_bus_out : out  STD_LOGIC_VECTOR (31 downto 0);-- data going to cache
+			  read_done : out STD_LOGIC;
+			  write_done : out STD_LOGIC); 
 end MainMemory;
 
 architecture Behavioral of MainMemory is
@@ -32,6 +34,7 @@ begin
 			index_dim_one := to_integer(unsigned(ppn_in));
 			index_dim_two := to_integer(unsigned(page_offset(6 downto 2)));
 			data_bus_out <= data_memory(index_dim_one)(index_dim_two);
+			read_done <= '1';
 		end if;
 		
 		if (write_enable = '1' AND FALLING_EDGE(clk)) then -- if clock is on its falling edge write will be done
@@ -40,6 +43,7 @@ begin
 			end loop;
 			ppn_out <= STD_LOGIC_VECTOR(to_unsigned(index, ppn_out'length));
 			index <= index + 1;
+			write_done <= '1';
 		end if;
 	end process;
 

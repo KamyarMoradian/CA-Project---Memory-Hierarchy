@@ -47,22 +47,19 @@ static void work_a_0412235654_3212880686_p_0(char *t0)
     char *t14;
     char *t15;
     char *t16;
-    char *t17;
-    char *t18;
-    char *t19;
 
-LAB0:    xsi_set_current_line(537, ng0);
+LAB0:    xsi_set_current_line(539, ng0);
     t1 = (t0 + 1152U);
     t2 = ieee_p_2592010699_sub_1744673427_503743352(IEEE_P_2592010699, t1, 0U, 0U);
     if (t2 != 0)
         goto LAB2;
 
 LAB4:
-LAB3:    t1 = (t0 + 3152);
+LAB3:    t1 = (t0 + 3432);
     *((int *)t1) = 1;
 
 LAB1:    return;
-LAB2:    xsi_set_current_line(538, ng0);
+LAB2:    xsi_set_current_line(540, ng0);
     t3 = (t0 + 1032U);
     t4 = *((char **)t3);
     t5 = *((unsigned char *)t4);
@@ -71,14 +68,32 @@ LAB2:    xsi_set_current_line(538, ng0);
         goto LAB5;
 
 LAB7:
-LAB6:    goto LAB3;
+LAB6:    xsi_set_current_line(543, ng0);
+    t1 = (t0 + 2128U);
+    t3 = *((char **)t1);
+    t1 = (t0 + 3512);
+    t4 = (t1 + 56U);
+    t7 = *((char **)t4);
+    t8 = (t7 + 56U);
+    t14 = *((char **)t8);
+    memcpy(t14, t3, 1024U);
+    xsi_driver_first_trans_fast_port(t1);
+    xsi_set_current_line(544, ng0);
+    t1 = (t0 + 3576);
+    t3 = (t1 + 56U);
+    t4 = *((char **)t3);
+    t7 = (t4 + 56U);
+    t8 = *((char **)t7);
+    *((unsigned char *)t8) = (unsigned char)3;
+    xsi_driver_first_trans_fast_port(t1);
+    goto LAB3;
 
-LAB5:    xsi_set_current_line(539, ng0);
-    t3 = (t0 + 1672U);
+LAB5:    xsi_set_current_line(541, ng0);
+    t3 = (t0 + 1832U);
     t7 = *((char **)t3);
     t3 = (t0 + 1352U);
     t8 = *((char **)t3);
-    t3 = (t0 + 5620U);
+    t3 = (t0 + 6172U);
     t9 = ieee_p_1242562249_sub_1657552908_1035706684(IEEE_P_1242562249, t8, t3);
     t10 = (t9 - 0);
     t11 = (t10 * 1);
@@ -86,13 +101,10 @@ LAB5:    xsi_set_current_line(539, ng0);
     t12 = (1024U * t11);
     t13 = (0 + t12);
     t14 = (t7 + t13);
-    t15 = (t0 + 3232);
-    t16 = (t15 + 56U);
-    t17 = *((char **)t16);
-    t18 = (t17 + 56U);
-    t19 = *((char **)t18);
-    memcpy(t19, t14, 1024U);
-    xsi_driver_first_trans_fast_port(t15);
+    t15 = (t0 + 2128U);
+    t16 = *((char **)t15);
+    t15 = (t16 + 0);
+    memcpy(t15, t14, 1024U);
     goto LAB6;
 
 }

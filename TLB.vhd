@@ -13,7 +13,9 @@ entity TLB is
            data_bus_in : in  STD_LOGIC_VECTOR (3 downto 0); -- input ppn
            clk : in  STD_LOGIC;
            data_bus_out : out  STD_LOGIC_VECTOR (3 downto 0); -- output ppn
-           hit : out  STD_LOGIC);
+           hit : out  STD_LOGIC;
+			  read_done : out STD_LOGIC;
+			  write_done : out STD_LOGIC);
 end TLB;
 
 architecture FullAssociative of TLB is
@@ -30,10 +32,6 @@ begin
 		ALIAS ppn : STD_LOGIC_VECTOR(3 downto 0) is data_row(3 downto 0);
 		
 		VARIABLE flag : STD_LOGIC := '0';
-		
-		VARIABLE seed1 : POSITIVE;
-		VARIABLE seed2 : POSITIVE;
-		VARIABLE x : REAL;
 		VARIABLE random_index : INTEGER;
 		
 	begin
@@ -52,6 +50,8 @@ begin
 			if (flag = '0') then
 				hit <= '0';
 			end if;
+			
+			read_done <= '1';
 		end if;
 		
 		if (write_enable = '1' AND FALLING_EDGE(clk)) then
@@ -60,7 +60,7 @@ begin
 			for i in 0 to 47 loop
 				data_row := TLB_Memory(i);
 				if (valid = '0') then
-					TLB_Memory(i)(12 downto 4) <= vpn;
+					TLB_Memory(i)(13 downto 4) <= '1' & vpn;
 					flag := '1';
 					exit;
 				end if;
@@ -68,13 +68,11 @@ begin
 			
 			if (flag = '0') then
 				-- generating random index
-				seed1 := 1;
-				seed2 := 1;
-				uniform(seed1, seed2, x);
-				random_index := integer(floor(x * 48.0));
-			
+				random_index := Integer(TIME'POS(now)) mod  48;
 				TLB_Memory(random_index)(13 downto 4) <= '1' & vpn; -- changing tag
 			end if;
+			
+			write_done <= '1';
 		end if;
 		
 	end Process;
@@ -138,7 +136,7 @@ begin
 			
 			for i in 0 to 11 loop
 				if (valid = '0') then
-					TLB_Memory(index)(i)(8 downto 4) <= input_tag;
+					TLB_Memory(index)(i)(9 downto 4) <= '1' & input_tag;
 					flag := '1';
 					exit;
 				end if;
@@ -154,7 +152,6 @@ begin
 				TLB_Memory(index)(random_index)(9 downto 4) <= '1' & input_tag; -- changing tag and valid bit
 			end if;
 		end if;
-		
 	end Process;
 
 end FourWaySetAssociative;

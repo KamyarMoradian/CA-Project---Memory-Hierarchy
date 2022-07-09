@@ -25,7 +25,7 @@ package Types is
 	TYPE data12in32in32 is ARRAY (0 to 12) of PAGE;
 	
 	TYPE state_type is ( Init, Processor_State, Cache_Read, TLB_Read, 
-                        RAM_Read, PT_Read, Disk_State, Cache_Write,
+                        RAM_Read, PT_Read, Disc_State, Cache_Write,
 								TLB_Write, RAM_Write, PT_Write);
 
 end Types;

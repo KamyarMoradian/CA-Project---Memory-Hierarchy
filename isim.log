@@ -10,3 +10,4 @@ Simulator is doing circuit initialization process.
 Finished circuit initialization process.
 # isim force add /processor/clk 1 -radix bin -value 0 -radix bin -time 50 ns -repeat 100 ns -cancel 2 ms
 # run all
+INFO: Simulator is stopped.

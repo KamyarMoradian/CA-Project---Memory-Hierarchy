@@ -11,7 +11,9 @@ entity Cache is
            data_bus_in : in  STD_LOGIC_VECTOR (31 downto 0);
            clk : in  STD_LOGIC;
            hit : out  STD_LOGIC;
-           data_bus_out : out  STD_LOGIC_VECTOR (31 downto 0));
+           data_bus_out : out  STD_LOGIC_VECTOR (31 downto 0);
+			  read_done : out STD_LOGIC;
+			  write_done : out STD_LOGIC);
 end Cache;
 
 architecture DirectMapped of Cache is
@@ -59,6 +61,8 @@ begin
 				else
 					hit <= '0';
 				end if;
+				
+				read_done <= '1';
 			end if;
 		end if;
 		
@@ -72,6 +76,8 @@ begin
 				else
 					data_memory(memory_index)(63 downto 32) <= data_bus_in;
 				end if;
+				
+				write_done <= '1';
 			end if;
       end if;
 		
@@ -126,6 +132,8 @@ begin
 				else
 					hit <= '0';
 				end if;
+				
+				read_done <= '1';
 			end if;
 		end if;
 		
@@ -145,6 +153,7 @@ begin
 				data_memory_1(memory_index) <= data_bus_in;
 			end if;
 			
+			write_done <= '1';
       end if;
 		
 	end Process;

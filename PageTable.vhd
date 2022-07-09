@@ -13,7 +13,9 @@ entity PageTable is
            ppn_in : in  STD_LOGIC_VECTOR (3 downto 0); -- incoming ppn from MainMemory
            clk : in  STD_LOGIC;
            ppn_out : out  STD_LOGIC_VECTOR (3 downto 0); -- outgoing ppn to TLB
-           hit : out  STD_LOGIC);
+           hit : out  STD_LOGIC;
+			  read_done : out STD_LOGIC;
+			  write_done : out STD_LOGIC);
 end PageTable;
 
 architecture Behavioral of PageTable is
@@ -49,14 +51,14 @@ begin
 			else
 				hit <= '0';
 			end if;
-			
+			read_done <= '1';
 		end if;
 		
 		if (write_enable = '1' AND FALLING_EDGE(clk)) then
 			index := to_integer(unsigned(vpn));
 			PT_Memory(index) <= '1' & ppn_in;
+			write_done <= '1';
 		end if;
-		
 	end Process;
 
 end Behavioral;
